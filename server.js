@@ -1,24 +1,16 @@
 // ===============================
-// 🚀 SAMS SERVER (FINAL FIXED)
+// 🚀 SAMS SERVER (PRODUCTION READY)
 // FILE: server.js
 // ===============================
 
 require("dotenv").config();
 
-const express =
-  require("express");
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path");
 
-const mongoose =
-  require("mongoose");
-
-const cors =
-  require("cors");
-
-const path =
-  require("path");
-
-const app =
-  express();
+const app = express();
 
 
 // ===============================
@@ -26,19 +18,17 @@ const app =
 // ===============================
 app.use(cors());
 
-app.use(
-  express.json()
-);
+app.use(express.json());
 
 app.use(
   express.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 
 
 // ===============================
-// 📁 STATIC FRONTEND
+// 📁 STATIC FILES
 // ===============================
 app.use(
   express.static(__dirname)
@@ -48,58 +38,39 @@ app.use(
 // ===============================
 // 🗄️ MONGODB CONNECTION
 // ===============================
-mongoose.connect(
-  process.env.MONGO_URI
-)
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
 
-.then(() => {
+    console.log(
+      "✅ MongoDB Connected"
+    );
+  })
 
-  console.log(
-    "✅ MongoDB Connected"
-  );
-})
+  .catch((err) => {
 
-.catch((err) => {
+    console.error(
+      "❌ MongoDB Error:",
+      err.message
+    );
 
-  console.error(
-    "❌ MongoDB Error:",
-    err.message
-  );
+    process.exit(1);
+  });
 
-  process.exit(1);
+
+// ===============================
+// 🌐 ROOT ROUTE
+// ===============================
+app.get("/", (req, res) => {
+
+  res.json({
+
+    success: true,
+
+    message:
+      "SGS Attendance API Running Successfully 🚀",
+  });
 });
-
-
-// ===============================
-// 📡 API ROUTES
-// ===============================
-
-// 🔐 AUTH
-app.use(
-  "/api/auth",
-  require("./routes/authRoutes")
-);
-
-
-// 👨‍💼 ADMIN
-app.use(
-  "/api/admin",
-  require("./routes/adminRoutes")
-);
-
-
-// 👨‍🏫 TEACHER
-app.use(
-  "/api/teacher",
-  require("./routes/teacherRoutes")
-);
-
-
-// 🏫 CLASSES
-app.use(
-  "/api/classes",
-  require("./routes/classRoutes")
-);
 
 
 // ===============================
@@ -120,6 +91,38 @@ app.get(
         "Server running 🚀",
     });
   }
+);
+
+
+// ===============================
+// 📡 API ROUTES
+// ===============================
+
+// 🔐 AUTH ROUTES
+app.use(
+  "/api/auth",
+  require("./routes/authRoutes")
+);
+
+
+// 👨‍💼 ADMIN ROUTES
+app.use(
+  "/api/admin",
+  require("./routes/adminRoutes")
+);
+
+
+// 👨‍🏫 TEACHER ROUTES
+app.use(
+  "/api/teacher",
+  require("./routes/teacherRoutes")
+);
+
+
+// 🏫 CLASS ROUTES
+app.use(
+  "/api/classes",
+  require("./routes/classRoutes")
 );
 
 
@@ -192,20 +195,18 @@ app.get(
 
 
 // ===============================
-// ❌ 404 ROUTE HANDLER
+// ❌ 404 HANDLER
 // ===============================
-app.use(
-  (req, res) => {
+app.use((req, res) => {
 
-    res.status(404).json({
+  res.status(404).json({
 
-      success: false,
+    success: false,
 
-      message:
-        "Route not found",
-    });
-  }
-);
+    message:
+      "Route not found",
+  });
+});
 
 
 // ===============================
@@ -239,18 +240,12 @@ app.use(
   }
 );
 
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "SGS Attendance API Running Successfully"
-  });
-});
+
 // ===============================
 // 🚀 START SERVER
 // ===============================
 const PORT =
-  process.env.PORT ||
-  5000;
+  process.env.PORT || 5000;
 
 app.listen(
   PORT,
