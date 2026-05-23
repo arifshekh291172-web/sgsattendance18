@@ -239,7 +239,12 @@ app.use(
   }
 );
 
-
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "SGS Attendance API Running Successfully"
+  });
+});
 // ===============================
 // 🚀 START SERVER
 // ===============================
