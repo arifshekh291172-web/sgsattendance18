@@ -1,16 +1,19 @@
 {
   "name": "sgs-attendance",
   "version": "1.0.0",
-  "description": "You are a senior frontend engineer and UI/UX designer.",
+  "description": "SGS Attendance Management System",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
+
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+
+  "engines": {
+    "node": "20.x"
+  },
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
@@ -21,6 +24,7 @@
     "multer": "^2.1.1",
     "nodemailer": "^6.9.16"
   },
+
   "devDependencies": {
     "nodemon": "^3.1.14"
   }
