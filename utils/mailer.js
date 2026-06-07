@@ -1,7 +1,8 @@
 // ==========================================
 // 📧 utils/mailer.js
 // ==========================================
-
+console.log(process.env.EMAIL_USER);
+console.log(process.env.EMAIL_PASS ? "PASS FOUND" : "PASS NOT FOUND");
 const nodemailer = require("nodemailer");
 
 console.log("================================");
