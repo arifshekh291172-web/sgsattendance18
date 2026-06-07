@@ -2,7 +2,7 @@
   "name": "sgs-attendance",
   "version": "1.0.0",
   "description": "You are a senior frontend engineer and UI/UX designer.",
-  "main": "admin-dashboard.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
