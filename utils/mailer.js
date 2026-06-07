@@ -2,6 +2,9 @@
 // 📧 utils/mailer.js
 // ==========================================
 
+console.log(process.env.EMAIL_USER);
+console.log(process.env.EMAIL_PASS ? "PASS FOUND" : "PASS NOT FOUND");
+
 const nodemailer = require("nodemailer");
 
 console.log("================================");
@@ -14,18 +17,39 @@ console.log(
 console.log("================================");
 
 // ==========================================
-// 🚀 GMAIL TRANSPORTER
+// 🚀 GMAIL SMTP TRANSPORTER
 // ==========================================
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 
-  connectionTimeout: 30000,
+  connectionTimeout: 60000,
+  greetingTimeout: 60000,
+  socketTimeout: 60000,
+});
+
+// ==========================================
+// ✅ VERIFY CONNECTION
+// ==========================================
+
+transporter.verify((err) => {
+  if (err) {
+    console.error(
+      "❌ Email server error:",
+      err
+    );
+  } else {
+    console.log(
+      "✅ Email server ready"
+    );
+  }
 });
 
 // ==========================================
@@ -61,13 +85,19 @@ const sendAbsentMail = async (
           background:white;
           padding:30px;
           border-radius:12px;
+          box-shadow:0 2px 10px rgba(0,0,0,0.1);
         ">
 
-          <h2 style="color:#4f46e5;">
+          <h2 style="
+            color:#4f46e5;
+            margin-bottom:20px;
+          ">
             Attendance Notification
           </h2>
 
-          <p>Dear Parent,</p>
+          <p>
+            Dear Parent,
+          </p>
 
           <p>
             This is to inform you that
@@ -124,10 +154,9 @@ const sendAbsentMail = async (
   } catch (err) {
 
     console.error(
-      "❌ FULL MAIL ERROR:"
+      "❌ Mail Error:",
+      err
     );
-
-    console.error(err);
 
     return false;
   }
