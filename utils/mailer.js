@@ -1,6 +1,11 @@
 // ==========================================
 // 📧 utils/mailer.js
-// ==========================================
+
+const dns = require("dns");
+
+dns.lookup("smtp.gmail.com", (err, address) => {
+  console.log("SMTP DNS RESULT:", err || address);
+});// ==========================================
 console.log(process.env.EMAIL_USER);
 console.log(process.env.EMAIL_PASS ? "PASS FOUND" : "PASS NOT FOUND");
 const nodemailer = require("nodemailer");
