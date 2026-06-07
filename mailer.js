@@ -22,7 +22,8 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
-
+console.log("MAILER FILE LOADED");
+console.log("SMTP PORT =", 587);
 // ==========================================
 // ✅ VERIFY EMAIL SERVER
 // ==========================================
