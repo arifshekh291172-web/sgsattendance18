@@ -1,20 +1,22 @@
 // ==========================================
 // 📧 MAILER CONFIG
 // ==========================================
-console.log("================================");
-console.log("NEW MAILER FILE LOADED");
-console.log("EMAIL USER:",process.env.EMAIL_USER);
-console.log("================================");
-console.log("EMAIL_USER =",process.env.EMAIL_USER);
-console.log(
-  "EMAIL_PASS EXISTS =",
-  !!process.env.EMAIL_PASS
-);
 
 const nodemailer = require("nodemailer");
 
+console.log("================================");
+console.log("NEW MAILER FILE LOADED");
+console.log("EMAIL USER:", process.env.EMAIL_USER);
+console.log(
+  "EMAIL_PASS LENGTH:",
+  process.env.EMAIL_PASS
+    ? process.env.EMAIL_PASS.length
+    : 0
+);
+console.log("================================");
+
 // ==========================================
-// 🚀 SMTP TRANSPORTER
+// 🚀 GMAIL SMTP TRANSPORTER
 // ==========================================
 
 const transporter = nodemailer.createTransport({
@@ -27,20 +29,27 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 
-  tls: {
-    rejectUnauthorized: false,
-  },
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
+
+  requireTLS: true,
 });
 
 // ==========================================
-// ✅ VERIFY EMAIL SERVER
+// ✅ VERIFY SMTP
 // ==========================================
 
 transporter.verify((err) => {
   if (err) {
-    console.error("❌ Email server error:",err);
+    console.error(
+      "❌ Email server error:",
+      err
+    );
   } else {
-    console.log("✅ Email server ready");
+    console.log(
+      "✅ Email server ready"
+    );
   }
 });
 
@@ -57,59 +66,76 @@ const sendAbsentMail = async (
   try {
     const mailOptions = {
       from: `"SGS Attendance System" <${process.env.EMAIL_USER}>`,
+
       to: parentEmail,
+
       subject: `Attendance Alert - ${studentName}`,
 
       html: `
-        <div style="font-family:Arial,sans-serif;padding:20px;background:#f4f7ff;">
-          <div style="max-width:600px;margin:auto;background:#fff;padding:30px;border-radius:12px;">
-            
-            <h2 style="color:#4f46e5;">
-              Attendance Notification
-            </h2>
+      <div style="font-family:Arial,sans-serif;padding:20px;background:#f4f7ff;">
+        <div style="max-width:600px;margin:auto;background:white;padding:30px;border-radius:12px;">
 
-            <p>Dear Parent,</p>
+          <h2 style="color:#4f46e5;">
+            Attendance Notification
+          </h2>
 
-            <p>
-              This is to inform you that
-              <strong>${studentName}</strong>
-              was marked
-              <span style="color:red;font-weight:bold;">
-                ABSENT
-              </span>
-              on
-              <strong>${date}</strong>.
-            </p>
+          <p>Dear Parent,</p>
 
-            <p>
-              Class:
-              <strong>${className}</strong>
-            </p>
+          <p>
+            This is to inform you that
+            <strong>${studentName}</strong>
+            was marked
+            <span style="color:red;font-weight:bold;">
+              ABSENT
+            </span>
+            on
+            <strong>${date}</strong>.
+          </p>
 
-            <p>
-              Please contact the school if needed.
-            </p>
+          <p>
+            Class:
+            <strong>${className}</strong>
+          </p>
 
-            <br>
+          <p>
+            Please contact the school if needed.
+          </p>
 
-            <p>
-              Regards,<br>
-              SGS Attendance System
-            </p>
+          <br>
 
-          </div>
+          <p>
+            Regards,<br>
+            SGS Attendance System
+          </p>
+
         </div>
+      </div>
       `,
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info =
+      await transporter.sendMail(
+        mailOptions
+      );
 
-    console.log("✅ Email Sent");
-    console.log("📨 Message ID:",info.messageId);
+    console.log(
+      "✅ Email Sent Successfully"
+    );
+
+    console.log(
+      "📨 Message ID:",
+      info.messageId
+    );
 
     return true;
+
   } catch (err) {
-    console.error("❌ Mail Error:",err);
+
+    console.error(
+      "❌ Mail Error:",
+      err
+    );
+
     return false;
   }
 };
