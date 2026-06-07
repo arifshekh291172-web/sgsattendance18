@@ -5,6 +5,12 @@ console.log("================================");
 console.log("NEW MAILER FILE LOADED");
 console.log("EMAIL USER:",process.env.EMAIL_USER);
 console.log("================================");
+console.log("EMAIL_USER =",process.env.EMAIL_USER);
+console.log(
+  "EMAIL_PASS EXISTS =",
+  !!process.env.EMAIL_PASS
+);
+
 const nodemailer = require("nodemailer");
 
 // ==========================================
