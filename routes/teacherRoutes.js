@@ -341,36 +341,42 @@ router.post(
       // ====================================
       // SEND ABSENT EMAIL
       // ====================================
-      for (const s of formattedStudents) {
+    for (const s of formattedStudents) {
 
-        if (
-          s.status ===
-          "Absent"
-        ) {
+  if (s.status === "Absent") {
 
-          const student =
-            await Student.findById(
-              s.studentId
-            );
+    const student =
+      await Student.findById(
+        s.studentId
+      );
 
-          if (
-            student &&
-            student.parentEmail
-          ) {
+    if (
+      student &&
+      student.parentEmail
+    ) {
 
-            await sendAbsentMail(
+      sendAbsentMail(
 
-              student.parentEmail,
+        student.parentEmail,
 
-              student.name,
+        student.name,
 
-              date,
+        date,
 
-              teacher.assignedClass
-            );
-          }
-        }
-      }
+        teacher.assignedClass
+
+      ).catch((err) => {
+
+        console.error(
+          "❌ Mail Error:",
+          err.message
+        );
+
+      });
+
+    }
+  }
+}
 
       // ====================================
       // SUCCESS
