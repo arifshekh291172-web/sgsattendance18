@@ -1,17 +1,15 @@
 // ==========================================
-// 📧 MAILER CONFIG
+// 📧 utils/mailer.js
 // ==========================================
 
 const nodemailer = require("nodemailer");
 
 console.log("================================");
-console.log("NEW MAILER FILE LOADED");
+console.log("📧 MAILER LOADED");
 console.log("EMAIL USER:", process.env.EMAIL_USER);
 console.log(
-  "EMAIL_PASS LENGTH:",
-  process.env.EMAIL_PASS
-    ? process.env.EMAIL_PASS.length
-    : 0
+  "EMAIL PASS EXISTS:",
+  !!process.env.EMAIL_PASS
 );
 console.log("================================");
 
@@ -21,23 +19,21 @@ console.log("================================");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  port: 465,
+  secure: true,
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-
-  requireTLS: true,
+  connectionTimeout: 60000,
+  greetingTimeout: 60000,
+  socketTimeout: 60000,
 });
 
 // ==========================================
-// ✅ VERIFY SMTP
+// ✅ VERIFY CONNECTION
 // ==========================================
 
 transporter.verify((err) => {
@@ -64,7 +60,9 @@ const sendAbsentMail = async (
   className
 ) => {
   try {
+
     const mailOptions = {
+
       from: `"SGS Attendance System" <${process.env.EMAIL_USER}>`,
 
       to: parentEmail,
@@ -72,20 +70,40 @@ const sendAbsentMail = async (
       subject: `Attendance Alert - ${studentName}`,
 
       html: `
-      <div style="font-family:Arial,sans-serif;padding:20px;background:#f4f7ff;">
-        <div style="max-width:600px;margin:auto;background:white;padding:30px;border-radius:12px;">
+      <div style="
+        font-family: Arial, sans-serif;
+        background:#f4f7ff;
+        padding:20px;
+      ">
 
-          <h2 style="color:#4f46e5;">
+        <div style="
+          max-width:600px;
+          margin:auto;
+          background:white;
+          padding:30px;
+          border-radius:12px;
+          box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        ">
+
+          <h2 style="
+            color:#4f46e5;
+            margin-bottom:20px;
+          ">
             Attendance Notification
           </h2>
 
-          <p>Dear Parent,</p>
+          <p>
+            Dear Parent,
+          </p>
 
           <p>
             This is to inform you that
             <strong>${studentName}</strong>
             was marked
-            <span style="color:red;font-weight:bold;">
+            <span style="
+              color:red;
+              font-weight:bold;
+            ">
               ABSENT
             </span>
             on
@@ -109,6 +127,7 @@ const sendAbsentMail = async (
           </p>
 
         </div>
+
       </div>
       `,
     };
@@ -119,7 +138,7 @@ const sendAbsentMail = async (
       );
 
     console.log(
-      "✅ Email Sent Successfully"
+      `📧 Email sent to ${parentEmail}`
     );
 
     console.log(
