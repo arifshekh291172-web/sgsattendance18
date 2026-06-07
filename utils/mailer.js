@@ -1,13 +1,7 @@
 // ==========================================
 // 📧 utils/mailer.js
 // ==========================================
-const dns = require("dns");
 
-dns.lookup("smtp.gmail.com", (err, address) => {
-  console.log("SMTP DNS RESULT:", err || address);
-});
-console.log(process.env.EMAIL_USER);
-console.log(process.env.EMAIL_PASS ? "PASS FOUND" : "PASS NOT FOUND");
 const nodemailer = require("nodemailer");
 
 console.log("================================");
@@ -20,39 +14,18 @@ console.log(
 console.log("================================");
 
 // ==========================================
-// 🚀 GMAIL SMTP TRANSPORTER
+// 🚀 GMAIL TRANSPORTER
 // ==========================================
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  service: "gmail",
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 
-  connectionTimeout: 60000,
-  greetingTimeout: 60000,
-  socketTimeout: 60000,
-});
-
-// ==========================================
-// ✅ VERIFY CONNECTION
-// ==========================================
-
-transporter.verify((err) => {
-  if (err) {
-    console.error(
-      "❌ Email server error:",
-      err
-    );
-  } else {
-    console.log(
-      "✅ Email server ready"
-    );
-  }
+  connectionTimeout: 30000,
 });
 
 // ==========================================
@@ -88,19 +61,13 @@ const sendAbsentMail = async (
           background:white;
           padding:30px;
           border-radius:12px;
-          box-shadow:0 2px 10px rgba(0,0,0,0.1);
         ">
 
-          <h2 style="
-            color:#4f46e5;
-            margin-bottom:20px;
-          ">
+          <h2 style="color:#4f46e5;">
             Attendance Notification
           </h2>
 
-          <p>
-            Dear Parent,
-          </p>
+          <p>Dear Parent,</p>
 
           <p>
             This is to inform you that
@@ -157,9 +124,10 @@ const sendAbsentMail = async (
   } catch (err) {
 
     console.error(
-      "❌ Mail Error:",
-      err
+      "❌ FULL MAIL ERROR:"
     );
+
+    console.error(err);
 
     return false;
   }
