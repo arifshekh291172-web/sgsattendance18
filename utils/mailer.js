@@ -1,10 +1,21 @@
 // ==========================================
 // 📧 utils/mailer.js
+// SGS Attendance - Brevo Version
 // ==========================================
 
-const { Resend } = require("resend");
+const brevo = require("@getbrevo/brevo");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// ==========================================
+// 🚀 BREVO CONFIG
+// ==========================================
+
+const apiInstance =
+  new brevo.TransactionalEmailsApi();
+
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 // ==========================================
 // 📩 SEND ABSENT MAIL
@@ -16,144 +27,198 @@ const sendAbsentMail = async (
   date,
   className
 ) => {
-  try {
-    const response = await resend.emails.send({
-      from: "SGS Attendance <onboarding@resend.dev>",
-      to: parentEmail,
-      subject: `🚨 Attendance Alert | ${studentName} Marked Absent`,
 
-      html: `
-      <div style="
+  try {
+
+    const email =
+      new brevo.SendSmtpEmail();
+
+    email.subject =
+      `🚨 Attendance Alert | ${studentName} Marked Absent`;
+
+    email.htmlContent = `
+    
+    <div style="
       max-width:700px;
       margin:auto;
       font-family:Arial,sans-serif;
       background:#f5f7fb;
       padding:30px;
-      ">
+    ">
 
       <div style="
-      background:#ffffff;
-      border-radius:15px;
-      overflow:hidden;
-      box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        background:#ffffff;
+        border-radius:15px;
+        overflow:hidden;
+        box-shadow:0 4px 20px rgba(0,0,0,0.08);
       ">
-
-      <div style="
-      background:linear-gradient(135deg,#2563eb,#4f46e5);
-      padding:25px;
-      text-align:center;
-      color:white;
-      ">
-        <h1 style="margin:0;">
-          🏫 SGS Attendance Management System
-        </h1>
-
-        <p style="
-        margin-top:8px;
-        opacity:0.9;
-        ">
-          Student Attendance Notification
-        </p>
-      </div>
-
-      <div style="padding:30px;">
-
-        <p>Dear Parent,</p>
-
-        <p>
-          We would like to inform you that your child has been marked absent during today's attendance record.
-        </p>
 
         <div style="
-        background:#fff4f4;
-        border-left:5px solid #ef4444;
-        padding:18px;
-        border-radius:8px;
-        margin:20px 0;
+          background:linear-gradient(135deg,#2563eb,#4f46e5);
+          padding:25px;
+          text-align:center;
+          color:white;
         ">
 
-          <h3 style="
-          margin-top:0;
-          color:#dc2626;
+          <h1 style="margin:0;">
+            🏫 SGS Attendance Management System
+          </h1>
+
+          <p style="
+            margin-top:8px;
+            opacity:0.9;
           ">
-            ⚠ Attendance Alert
-          </h3>
-
-          <p><b>Student Name:</b> ${studentName}</p>
-
-          <p><b>Class:</b> ${className}</p>
-
-          <p><b>Date:</b> ${date}</p>
-
-          <p>
-            <b>Status:</b>
-            <span style="
-            color:#dc2626;
-            font-weight:bold;
-            ">
-              ABSENT
-            </span>
+            Student Attendance Notification
           </p>
 
         </div>
 
-        <p>
-          Kindly ensure that the reason for absence is communicated to the school administration if required.
-        </p>
+        <div style="padding:30px;">
 
-        <p>
-          Regular attendance is important for academic progress and classroom participation.
-        </p>
+          <p>Dear Parent,</p>
 
-        <div style="
-        background:#eef4ff;
-        padding:15px;
-        border-radius:8px;
-        margin-top:20px;
-        ">
+          <p>
+            We would like to inform you that your child
+            has been marked absent during today's attendance.
+          </p>
 
-          <b>School Note:</b><br>
-          If this attendance information appears incorrect, please contact the school immediately.
+          <div style="
+            background:#fff4f4;
+            border-left:5px solid #ef4444;
+            padding:18px;
+            border-radius:8px;
+            margin:20px 0;
+          ">
+
+            <h3 style="
+              margin-top:0;
+              color:#dc2626;
+            ">
+              ⚠ Attendance Alert
+            </h3>
+
+            <p>
+              <b>Student Name:</b>
+              ${studentName}
+            </p>
+
+            <p>
+              <b>Class:</b>
+              ${className}
+            </p>
+
+            <p>
+              <b>Date:</b>
+              ${date}
+            </p>
+
+            <p>
+              <b>Status:</b>
+              <span style="
+                color:#dc2626;
+                font-weight:bold;
+              ">
+                ABSENT
+              </span>
+            </p>
+
+          </div>
+
+          <p>
+            Kindly ensure that the reason
+            for absence is communicated
+            to the school administration.
+          </p>
+
+          <p>
+            Regular attendance is important
+            for academic progress and
+            classroom participation.
+          </p>
+
+          <div style="
+            background:#eef4ff;
+            padding:15px;
+            border-radius:8px;
+            margin-top:20px;
+          ">
+
+            <b>School Note:</b><br>
+
+            If this attendance information
+            appears incorrect, please contact
+            the school immediately.
+
+          </div>
+
+          <br>
+
+          <p>
+            Regards,<br><br>
+
+            <b>
+              SGS Attendance Management System
+            </b><br>
+
+            School Administration
+          </p>
 
         </div>
 
-        <br>
+        <div style="
+          background:#f8fafc;
+          padding:18px;
+          text-align:center;
+          font-size:13px;
+          color:#64748b;
+          border-top:1px solid #e5e7eb;
+        ">
 
-        <p>
-          Regards,<br><br>
+          This is an automated notification
+          generated by the SGS Attendance
+          Management System.<br>
 
-          <b>SGS Attendance Management System</b><br>
-          School Administration
-        </p>
+          Please do not reply directly
+          to this email.
 
-      </div>
-
-      <div style="
-      background:#f8fafc;
-      padding:18px;
-      text-align:center;
-      font-size:13px;
-      color:#64748b;
-      border-top:1px solid #e5e7eb;
-      ">
-
-        This is an automated notification generated by the SGS Attendance Management System.<br>
-        Please do not reply directly to this email.
+        </div>
 
       </div>
 
-      </div>
+    </div>
+    `;
 
-      </div>
-      `,
-    });
+    email.sender = {
+      name: "SGS Attendance System",
+      email: "arifshekh291172@gmail.com"
+    };
 
-    console.log("✅ Email Sent Successfully");
+    email.to = [
+      {
+        email: parentEmail
+      }
+    ];
+
+    const response =
+      await apiInstance.sendTransacEmail(
+        email
+      );
+
+    console.log(
+      "✅ Email Sent Successfully"
+    );
+
     console.log(response);
 
     return true;
-  } catch (err) {
-    console.error("❌ Email Error:", err);
+
+  } catch (error) {
+
+    console.error(
+      "❌ Email Error:",
+      error
+    );
+
     return false;
   }
 };
