@@ -2,55 +2,9 @@
 // 📧 utils/mailer.js
 // ==========================================
 
-console.log(process.env.EMAIL_USER);
-console.log(process.env.EMAIL_PASS ? "PASS FOUND" : "PASS NOT FOUND");
+const { Resend } = require("resend");
 
-const nodemailer = require("nodemailer");
-
-console.log("================================");
-console.log("📧 MAILER LOADED");
-console.log("EMAIL USER:", process.env.EMAIL_USER);
-console.log(
-  "EMAIL PASS EXISTS:",
-  !!process.env.EMAIL_PASS
-);
-console.log("================================");
-
-// ==========================================
-// 🚀 GMAIL SMTP TRANSPORTER
-// ==========================================
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-
-  connectionTimeout: 60000,
-  greetingTimeout: 60000,
-  socketTimeout: 60000,
-});
-
-// ==========================================
-// ✅ VERIFY CONNECTION
-// ==========================================
-
-transporter.verify((err) => {
-  if (err) {
-    console.error(
-      "❌ Email server error:",
-      err
-    );
-  } else {
-    console.log(
-      "✅ Email server ready"
-    );
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ==========================================
 // 📩 SEND ABSENT MAIL
@@ -63,101 +17,143 @@ const sendAbsentMail = async (
   className
 ) => {
   try {
-
-    const mailOptions = {
-
-      from: `"SGS Attendance System" <${process.env.EMAIL_USER}>`,
-
+    const response = await resend.emails.send({
+      from: "SGS Attendance <onboarding@resend.dev>",
       to: parentEmail,
-
-      subject: `Attendance Alert - ${studentName}`,
+      subject: `🚨 Attendance Alert | ${studentName} Marked Absent`,
 
       html: `
       <div style="
-        font-family: Arial, sans-serif;
-        background:#f4f7ff;
-        padding:20px;
+      max-width:700px;
+      margin:auto;
+      font-family:Arial,sans-serif;
+      background:#f5f7fb;
+      padding:30px;
       ">
 
+      <div style="
+      background:#ffffff;
+      border-radius:15px;
+      overflow:hidden;
+      box-shadow:0 4px 20px rgba(0,0,0,0.08);
+      ">
+
+      <div style="
+      background:linear-gradient(135deg,#2563eb,#4f46e5);
+      padding:25px;
+      text-align:center;
+      color:white;
+      ">
+        <h1 style="margin:0;">
+          🏫 SGS Attendance Management System
+        </h1>
+
+        <p style="
+        margin-top:8px;
+        opacity:0.9;
+        ">
+          Student Attendance Notification
+        </p>
+      </div>
+
+      <div style="padding:30px;">
+
+        <p>Dear Parent,</p>
+
+        <p>
+          We would like to inform you that your child has been marked absent during today's attendance record.
+        </p>
+
         <div style="
-          max-width:600px;
-          margin:auto;
-          background:white;
-          padding:30px;
-          border-radius:12px;
-          box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        background:#fff4f4;
+        border-left:5px solid #ef4444;
+        padding:18px;
+        border-radius:8px;
+        margin:20px 0;
         ">
 
-          <h2 style="
-            color:#4f46e5;
-            margin-bottom:20px;
+          <h3 style="
+          margin-top:0;
+          color:#dc2626;
           ">
-            Attendance Notification
-          </h2>
+            ⚠ Attendance Alert
+          </h3>
+
+          <p><b>Student Name:</b> ${studentName}</p>
+
+          <p><b>Class:</b> ${className}</p>
+
+          <p><b>Date:</b> ${date}</p>
 
           <p>
-            Dear Parent,
-          </p>
-
-          <p>
-            This is to inform you that
-            <strong>${studentName}</strong>
-            was marked
+            <b>Status:</b>
             <span style="
-              color:red;
-              font-weight:bold;
+            color:#dc2626;
+            font-weight:bold;
             ">
               ABSENT
             </span>
-            on
-            <strong>${date}</strong>.
-          </p>
-
-          <p>
-            Class:
-            <strong>${className}</strong>
-          </p>
-
-          <p>
-            Please contact the school if needed.
-          </p>
-
-          <br>
-
-          <p>
-            Regards,<br>
-            SGS Attendance System
           </p>
 
         </div>
 
+        <p>
+          Kindly ensure that the reason for absence is communicated to the school administration if required.
+        </p>
+
+        <p>
+          Regular attendance is important for academic progress and classroom participation.
+        </p>
+
+        <div style="
+        background:#eef4ff;
+        padding:15px;
+        border-radius:8px;
+        margin-top:20px;
+        ">
+
+          <b>School Note:</b><br>
+          If this attendance information appears incorrect, please contact the school immediately.
+
+        </div>
+
+        <br>
+
+        <p>
+          Regards,<br><br>
+
+          <b>SGS Attendance Management System</b><br>
+          School Administration
+        </p>
+
+      </div>
+
+      <div style="
+      background:#f8fafc;
+      padding:18px;
+      text-align:center;
+      font-size:13px;
+      color:#64748b;
+      border-top:1px solid #e5e7eb;
+      ">
+
+        This is an automated notification generated by the SGS Attendance Management System.<br>
+        Please do not reply directly to this email.
+
+      </div>
+
+      </div>
+
       </div>
       `,
-    };
+    });
 
-    const info =
-      await transporter.sendMail(
-        mailOptions
-      );
-
-    console.log(
-      `📧 Email sent to ${parentEmail}`
-    );
-
-    console.log(
-      "📨 Message ID:",
-      info.messageId
-    );
+    console.log("✅ Email Sent Successfully");
+    console.log(response);
 
     return true;
-
   } catch (err) {
-
-    console.error(
-      "❌ Mail Error:",
-      err
-    );
-
+    console.error("❌ Email Error:", err);
     return false;
   }
 };
