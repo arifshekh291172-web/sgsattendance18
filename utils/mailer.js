@@ -9,8 +9,9 @@ const brevo = require("@getbrevo/brevo");
 // 🚀 BREVO CONFIG
 // ==========================================
 
-const apiInstance =
-  new brevo.TransactionalEmailsApi();
+const brevo = require("@getbrevo/brevo");
+
+const apiInstance = new brevo.TransactionalEmailsApi();
 
 apiInstance.setApiKey(
   brevo.TransactionalEmailsApiApiKeys.apiKey,
